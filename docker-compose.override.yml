@@ -1,0 +1,61 @@
+services:
+  adminer:
+    image: adminer
+    ports:
+      - 9999:8080
+
+# laravel Api Platform
+  # laravel-db:
+  #   volumes:
+  #     - ./.docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+  #     - ./.docker/mysql/data/laravel-db:/var/lib/mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: Welcome2Laravel!
+  #     MYSQL_DATABASE: laravel-db
+  #     MYSQL_USER: laravel
+  #     MYSQL_PASSWORD: Welcome2Laravel!
+  #   ports:
+  #     - 43306:3306
+
+
+
+  postgres-db:
+    ports:
+      - "5432:5432"  # پورت 5432 روی host به پورت 5432 در container مپ شده است
+    environment:
+      POSTGRES_USER: Laravel  # نام کاربر postgres
+      POSTGRES_PASSWORD: Welcome2Laravel!  # رمز عبور کاربر postgres
+      POSTGRES_DB: postgres-db  # نام پایگاه داده
+    volumes:
+      - ./.docker/postgres/pgdata:/var/lib/postgresql/data  # ذخیره داده‌ها در volume
+
+
+
+  laravel-api:
+    volumes:
+      - ./:/var/www
+    ports:
+      - 9001:9000
+
+
+  laravel-api-nginx:
+    ports:
+      - "98:80"
+      - "8531:443"
+    volumes:
+      - ./.docker/nginx/sites/laravel.conf:/etc/nginx/conf.d/default.conf
+      - ./.docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./:/var/www
+
+
+
+  # gitlab:
+  #   image: gitlab/gitlab-ce:latest 
+  #   restart: always
+  #   ports:
+  #     - "8080:80"  
+  #     - "8444:443" 
+  #   volumes:
+  #     - ./gitlab-data:/etc/gitlab
+  #     - ./gitlab-logs:/var/log/gitlab
+  #     - ./gitlab-config:/etc/gitlab

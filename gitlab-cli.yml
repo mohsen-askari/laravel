@@ -1,0 +1,33 @@
+stages:
+  - test
+
+test:
+  image: laravel-api
+  services:
+    - laravel-db:
+        image: mysql:8.0 
+        alias: laravel-db
+        environment:
+          MYSQL_ROOT_PASSWORD: Welcome2Laravel!
+          MYSQL_DATABASE: laravel-db
+          MYSQL_USER: laravel
+          MYSQL_PASSWORD: Welcome2Laravel!
+
+  variables:
+    DATABASE_URL: "mysql://laravel:Welcome2Laravel!@laravel-db:3306/laravel-db?serverVersion=8.0.32&charset=utf8mb4"
+
+  before_script:
+    - composer install --no-interaction --no-dev
+    - bin/console doctrine:database:create --if-not-exists
+    - bin/console doctrine:schema:update --force
+  script:
+    - bin/console phpunit
+  artifacts:
+    paths:
+      - var/cache/test/
+    expire_in: 1 day
+  only:
+    - main
+    - develop
+  except:
+    - feature/*

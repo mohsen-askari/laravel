@@ -1,0 +1,26 @@
+services:
+
+
+# For laravel Platform
+  # laravel-db:
+  #   image: mysql:8.0.23
+  #   restart: on-failure
+
+  postgres-db:
+    image: postgres:latest
+    restart: on-failure
+
+  laravel-api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: on-failure
+    depends_on:
+      - laravel-db
+    working_dir: /var/www
+
+  laravel-api-nginx:
+    image: nginx
+    restart: on-failure
+    depends_on:
+      - laravel-api
